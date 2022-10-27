@@ -68,3 +68,8 @@ class FileStorage:
                 self.__objects.pop(key)
         else:
             return
+
+    def close(self):
+        """Deserializes the JSON file to objects"""
+        self.reload()
+    
