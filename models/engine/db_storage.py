@@ -14,7 +14,10 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 
-all_classes = [City, State, User, Place, Review]
+all_classes = {'State': State, 'City': City,
+               'User': User, 'Place': Place,
+               'Review': Review,  # 'Amenity': Amenity
+               }
 
 
 class DBStorage():
