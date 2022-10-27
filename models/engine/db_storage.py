@@ -47,7 +47,7 @@ class DBStorage():
             for obj in self.__session.query(cls).all():
                 obj_dict.update({f'{type(cls).__name__}.{obj.id}': obj})
         else:
-            for class_name in all_classes.values():
+            for class_name in class_list.values():
                 obj_list = self.__session.query(class_name)
                 for obj in obj_list:
                     obj_dict.update({f'{type(obj).__name__}.{obj.id}': obj})
