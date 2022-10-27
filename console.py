@@ -228,7 +228,7 @@ class HBNBCommand(cmd.Cmd):
         """ Shows all objects, or all objects of a class"""
         if line:
             args = line.split(" ")
-            if args[0] not in self.all_classes:
+            if args[0] not in self.classes:
                 print("** class doesn't exist **")
                 return
             objects = storage.all(line)
