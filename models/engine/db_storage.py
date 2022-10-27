@@ -2,17 +2,17 @@
 """
 Storage module
 """
+import datetime
 from os import getenv
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-from models.base_model import Base
-import models
-from models.city import City
-from models.state import State
+from models.base_model import BaseModel, Base
 from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-from models.amenity import Amenity
 
 class_list = [City, State, User, Place, Review]
 
@@ -53,11 +53,11 @@ class DBStorage():
             objs += self.__session.query(Amenity).all()
             objs += self.__session.query(Review).all()
 
-        new_dic = {}
+        new_dict = {}
         for obj in objs:
-            k = '{}.{}'.format(type(obj).__name__, obj.id)
-            new_dic[k] = obj
-        return new_dic
+            k = obj.__class__.__name__, obj.id
+            new_dict[k] = obj
+        return new_dict
 
     def new(self, obj):
         """
