@@ -14,7 +14,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 
-class_list = [City, State, User, Place, Review]
+all_classes = [City, State, User, Place, Review]
 
 
 class DBStorage():
@@ -47,7 +47,7 @@ class DBStorage():
             for obj in self.__session.query(cls).all():
                 obj_dict.update({f'{type(cls).__name__}.{obj.id}': obj})
         else:
-            for class_name in class_list.values():
+            for class_name in all_classes.values():
                 obj_list = self.__session.query(class_name)
                 for obj in obj_list:
                     obj_dict.update({f'{type(obj).__name__}.{obj.id}': obj})
