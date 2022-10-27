@@ -76,4 +76,4 @@ class BaseModel:
         """
         deletes instance from storage
         """
-        models.storage.delete(self
+        models.storage.delete(self)
