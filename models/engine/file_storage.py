@@ -17,7 +17,16 @@ class FileStorage:
         '''
             Return the dictionary
         '''
-        return self.__objects
+        if cls is not None:
+            filterjs = {}
+            for key, value in self.__objects.items():
+                # find the name of the class
+                if value.__class__.name__ == cls.__name__:
+                    # add to the filtered dictionary
+                    filterjs[key] = value
+            return filterjs
+        else:
+            return FileStorage.__objects
 
     def new(self, obj):
         '''
