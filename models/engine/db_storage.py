@@ -14,10 +14,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 
-all_classes = {'State': State, 'City': City,
-               'User': User, 'Place': Place,
-               'Review': Review,  # 'Amenity': Amenity
-               }
+class_list = [City, State, User, Place, Review]
 
 
 class DBStorage():
@@ -43,18 +40,23 @@ class DBStorage():
             Base.metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
-        """ """
-        obj_dict = {}
-
-        if cls is not None:
-            for obj in self.__session.query(cls).all():
-                obj_dict.update({f'{type(cls).__name__}.{obj.id}': obj})
+        """Returns dictionary with all objects depending
+        of the class name (argument cls)"""
+        if cls:
+            objs = self.__session.query(self.classes()[cls])
         else:
-            for class_name in all_classes.values():
-                obj_list = self.__session.query(class_name)
-                for obj in obj_list:
-                    obj_dict.update({f'{type(obj).__name__}.{obj.id}': obj})
-        return obj_dict
+            objs = self.__session.query(State).all()
+            objs += self.__session.query(City).all()
+            objs += self.__session.query(User).all()
+            objs += self.__session.query(Place).all()
+            objs += self.__session.query(Amenity).all()
+            objs += self.__session.query(Review).all()
+
+        dic = {}
+        for obj in objs:
+            k = '{}.{}'.format(type(obj).__name__, obj.id)
+            dic[k] = obj
+        return dic
 
     def new(self, obj):
         """
