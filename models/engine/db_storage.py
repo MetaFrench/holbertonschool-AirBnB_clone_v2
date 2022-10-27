@@ -2,25 +2,29 @@
 """
 Storage module
 """
+import datetime
 from os import getenv
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-from models.base_model import Base
-import models
-from models.city import City
-from models.state import State
+from models.base_model import BaseModel, Base
 from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-from models.amenity import Amenity
 
-class_list = [City, State, User, Place, Review]
+all_classes = {'State': State, 'City': City,
+               'User': User, 'Place': Place,
+               'Review': Review,
+               }
 
 
 class DBStorage():
     """
     DBStorage class
     """
+    # Private class attributes
     __engine = None
     __session = None
 
@@ -36,27 +40,21 @@ class DBStorage():
                                       pool_pre_ping=True)
 
         if getenv('HBNB_ENV') == 'test':
-            Base.metadata.drop_all(self.__engine)
+            Base.metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
-        """
-        current database session query
-        """
-        new_dict = {}
+        """ all method """
+        obj_dict = {}
 
-        if not cls:
-            for a_class in class_list:
-                for obj in self.__session.query(a_class):
-                    k = obj.__class__.__name__, obj.id
-                    new_dict[k] = obj
+        if cls is not None:
+            for obj in self.__session.query(cls).all():
+                obj_dict.update({f'{type(cls).__name__}.{obj.id}': obj})
         else:
-            if type(cls) is str:
-                cls = models.classes[cls]
-            query = self.__session.query(cls)
-            for obj in query:
-                k = obj.__class__.__name__, obj.id
-                new_dict[k] = obj
-        return new_dict
+            for class_name in all_classes.values():
+                obj_list = self.__session.query(class_name)
+                for obj in obj_list:
+                    obj_dict.update({f'{type(obj).__name__}.{obj.id}': obj})
+        return obj_dict
 
     def new(self, obj):
         """
@@ -88,9 +86,3 @@ class DBStorage():
                                        expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()
-
-    def close(self):
-        """
-        close session
-        """
-        self.__session.remove()
