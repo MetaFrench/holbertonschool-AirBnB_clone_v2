@@ -43,7 +43,7 @@ class DBStorage():
             Base.metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
-        """ """
+        """ all method """
         obj_dict = {}
 
         if cls is not None:
