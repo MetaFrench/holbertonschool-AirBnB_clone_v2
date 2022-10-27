@@ -43,21 +43,21 @@ class DBStorage():
         """
         current database session query
         """
-        new_dict = {}
-
-        if not cls:
-            for a_class in class_list:
-                for obj in self.__session.query(a_class):
-                    k = obj.__class__.__name__, obj.id
-                    new_dict[k] = obj
+        if cls:
+            objs = self.__session.query(self.classes()[cls])
         else:
-            if type(cls) is str:
-                cls = models.classes[cls]
-            query = self.__session.query(cls)
-            for obj in query:
-                k = obj.__class__.__name__, obj.id
-                new_dict[k] = obj
-        return new_dict
+            objs = self.__session.query(State).all()
+            objs += self.__session.query(City).all()
+            objs += self.__session.query(User).all()
+            objs += self.__session.query(Place).all()
+            objs += self.__session.query(Amenity).all()
+            objs += self.__session.query(Review).all()
+
+        new_dic = {}
+        for obj in objs:
+            k = '{}.{}'.format(type(obj).__name__, obj.id)
+            new_dic[k] = obj
+        return new_dic
 
     def new(self, obj):
         """
