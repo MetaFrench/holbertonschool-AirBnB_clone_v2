@@ -21,6 +21,7 @@ class DBStorage():
     """
     DBStorage class
     """
+    # Private class attributes
     __engine = None
     __session = None
 
