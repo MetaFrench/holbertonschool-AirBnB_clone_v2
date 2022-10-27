@@ -34,7 +34,9 @@ class FileStorage:
             Aguments:
                 obj : An instance object.
         '''
-        self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
+        key = str(obj.__class__.__name__) + "." + str(obj.id)
+        value_dict = obj
+        FileStorage.__objects[key] = value_dict
 
     def save(self):
         '''
