@@ -40,9 +40,8 @@ class DBStorage():
             Base.metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
-        """
-        current database session query
-        """
+        """Returns dictionary with all objects depending
+        of the class name (argument cls)"""
         if cls:
             objs = self.__session.query(self.classes()[cls])
         else:
@@ -53,11 +52,11 @@ class DBStorage():
             objs += self.__session.query(Amenity).all()
             objs += self.__session.query(Review).all()
 
-        new_dict = {}
+        dic = {}
         for obj in objs:
-            k = obj.__class__.__name__, obj.id
-            new_dict[k] = obj
-        return new_dict
+            k = '{}.{}'.format(type(obj).__name__, obj.id)
+            dic[k] = obj
+        return dic
 
     def new(self, obj):
         """
