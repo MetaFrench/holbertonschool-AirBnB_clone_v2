@@ -67,10 +67,14 @@ class FileStorage:
         '''
         delete obj from __objects
         '''
-        if obj:
-            k = obj.__class__.__name__+'.'+obj.id
-            if k in self.__objects:
-                del self.__objects[k]
+        if obj is not None:
+            # pull obj key and define it in variable
+            key = obj.__class__.__name__ + "." + obj.id
+            # If key is found in the dictionar, use key to delete object.
+            if key in self.__objects:
+                self.__objects.pop(key)
+        else:
+            return
 
     def close(self):
         '''
