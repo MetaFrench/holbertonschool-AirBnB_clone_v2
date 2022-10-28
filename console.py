@@ -2,7 +2,6 @@
 """ Console Module """
 import cmd
 import sys
-from os import getenv
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -73,7 +72,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] == '{' and pline[-1] == '}'\
+                    if pline[0] == '{' and pline[-1] == '}' \
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -113,27 +112,44 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, *args):
+    def do_create(self, args):
         """ Create an object of any class"""
         if not args:
             print("** class name missing **")
             return
-        arg_list = args[0].split()
-        if arg_list[0] not in HBNBCommand.classes:
+
+        # Turning the command input into a list of strings
+        arglist = args.split()
+        class_name = arglist[0]
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[arg_list[0]]()
-        for attr in arg_list[1:]:
-            kwarg_list = attr.split('=')
-            if '\"' in kwarg_list[1]:
-                kwarg_list[1] = kwarg_list[1][1:-1]
-                kwarg_list[1] = kwarg_list[1].replace('_', ' ')
+
+        # Create new instance with class.
+        new_instance = HBNBCommand.classes[class_name]()
+        # Create seperate list for parameters of class
+        param_list = arglist[1:]
+        # Gets single parameter, splits key and value, checks not empty
+        for par in param_list:
+            attr = par.partition("=")
+            if attr[1] == "" or attr[2] == "":
+                pass
+            # making variables for key, value
+            key = attr[0]
+            value = attr[2]
+            # Checking if value has quotes, if so remove them.
+            if value[0] == '"':
+                value = value[1:-1]
+                value = value.replace("_", " ")
+            elif "." in value:
+                value = float(value)
             else:
-                kwarg_list[1] = eval(kwarg_list[1])
-            if hasattr(new_instance, kwarg_list[0]):
-                setattr(new_instance, kwarg_list[0], kwarg_list[1])
+                value = int(value)
+            if hasattr(new_instance, key):
+                setattr(new_instance, key, value)
+
+        storage.save()
         print(new_instance.id)
-        storage.new(new_instance)
         storage.save()
 
     def help_create(self):
@@ -197,7 +213,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -211,18 +227,17 @@ class HBNBCommand(cmd.Cmd):
         """ Shows all objects, or all objects of a class"""
         print_list = []
 
-        args = args.split(' ')[0]  # remove possible trailing args
-        if getenv("HBNB_TYPE_STORAGE") == "db":
-            obj_dict = storage.all(args)
-            for value in obj_dict.values():
-                print_list.append(str(value))
-        else:
-            if args and args not in HBNBCommand.classes:
+        if args:
+            args = args.split(' ')[0]  # remove possible trailing args
+            if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
             for k, v in storage._FileStorage__objects.items():
-                if (not args) or (k.split('.')[0] == args):
+                if k.split('.')[0] == args:
                     print_list.append(str(v))
+        else:
+            for k, v in storage._FileStorage__objects.items():
+                print_list.append(str(v))
 
         print(print_list)
 
@@ -330,6 +345,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
