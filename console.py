@@ -117,38 +117,31 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-
-        # Turning the command input into a list of strings
         arglist = args.split()
-        class_name = arglist[0]
-        if class_name not in HBNBCommand.classes:
+        c_name = arglist[0]
+        if c_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-
-        # Create new instance with class.
-        new_instance = HBNBCommand.classes[class_name]()
-        # Create seperate list for parameters of class
-        param_list = arglist[1:]
-        # Gets single parameter, splits key and value, checks not empty
-        for par in param_list:
-            attr = par.partition("=")
+        # create a new instance based on class name given
+        new_instance = HBNBCommand.classes[c_name]()
+        paramlist = arglist[1:]  # create a list of paramters only
+        for param in paramlist:  # for each parameter get key name and value
+            attr = param.partition("=")
             if attr[1] == "" or attr[2] == "":
                 pass
-            # making variables for key, value
-            key = attr[0]
-            value = attr[2]
-            # Checking if value has quotes, if so remove them.
-            if value[0] == '"':
-                value = value[1:-1]
-                value = value.replace("_", " ")
-            elif "." in value:
-                value = float(value)
-            else:
-                value = int(value)
-            if hasattr(new_instance, key):
-                setattr(new_instance, key, value)
+            attrname = attr[0]  # index 0 of tuple is the key name
+            attrvalue = attr[2]  # value is the 2nd index of tuple
 
-        storage.save()
+            if attrvalue[0] == '"':  # checking for double quote of str value
+                attrvalue = attrvalue[1:-1]  # dont include double quotes
+                attrvalue = attrvalue.replace("_", " ")  # remove underscores
+            elif "." in attrvalue:  # if value contains dot it's a float
+                attrvalue = float(attrvalue)
+            else:
+                attrvalue = int(attrvalue)  # default case is an integer
+            if hasattr(new_instance, attrname):
+                setattr(new_instance, attrname, attrvalue)
+        storage.new(new_instance)
         print(new_instance.id)
         storage.save()
 
