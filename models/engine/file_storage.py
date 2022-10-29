@@ -59,16 +59,9 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
-        '''delete obj from __objects'''
-        if obj is not None:
-            # pull obj key and define it in variable
-            key = obj.__class__.__name__ + "." + obj.id
-            # If key is found in the dictionar, use key to delete object.
-            if key in self.__objects:
-                self.__objects.pop(key)
-        else:
-            return
-
-    def close(self):
-        """deserializes the JSON file to objects"""
-        self.reload()
+        """Deletes obj from __objects"""
+        if obj is None:
+            pass
+        for key, val in dict(FileStorage.__objects).items():
+            if val == obj:
+                del FileStorage.__objects[key]
