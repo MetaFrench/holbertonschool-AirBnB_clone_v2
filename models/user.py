@@ -8,13 +8,6 @@ from sqlalchemy.orm import relationship
 class User(BaseModel, Base):
     """This class defines a user by various attributes"""
 
-    def __init__(self, username: str, password_hash: str, email: str):
-        """Initiates self"""
-        [...]
-
-        # Initialize base class
-        super(User, self).__init__()
-
     __tablename__ = 'users'
 
     email = Column(String(128), nullable=False)
