@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 #savepoint
 
 
-class User(BaseModel):
+class User(BaseModel, Base):
     """This class defines a user by various attributes"""
 
     __tablename__ = 'users'

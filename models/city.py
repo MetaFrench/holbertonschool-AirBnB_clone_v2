@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 #savepoint
 
 
-class City(BaseModel):
+class City(BaseModel, Base):
     """ The city class, contains state ID and name """
     __tablename__ = 'cities'
 
