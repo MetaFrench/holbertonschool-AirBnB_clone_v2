@@ -9,7 +9,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-#save point
+#def create needs some work / save point
 
 
 class HBNBCommand(cmd.Cmd):
