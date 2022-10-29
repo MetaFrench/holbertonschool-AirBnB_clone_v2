@@ -17,7 +17,7 @@ from models.amenity import Amenity
 class_list = [City, State, User, Place, Review]
 
 
-class DBStorage():
+class DBStorage:
     """
     DBStorage class
     """
