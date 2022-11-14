@@ -1,25 +1,29 @@
 #!/usr/bin/python3
 """ State Module for HBNB project """
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
 from os import getenv
 from models.city import City
 from sqlalchemy.orm import relationship
 import models
+#savepoint
 
 
-class State(BaseModel):
+class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
-        # sets relationship between state and city
+        # define relationship between city and state
         cities = relationship('City', backref='state',
-                                cascade='all, delete, delete-orphan')
+                              cascade='all, delete, delete-orphan')
     else:
-        @property
+        @property  # prepare a getter attr to define rltshp of city & state
         def cities(self):
-            """returns list of City instances associated with state.id"""
-            return [city for city in models.storage.all(City).values()
-                    if city.state_id == self.id]
+            """returns list of City instances with current state.id"""
+            citylist = []
+            for city in storage.all(City).values():
+                if city.state_id == self.id:
+                    citylist.append(city)
+            return citylist

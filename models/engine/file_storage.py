@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """This module defines a class to manage file storage for hbnb clone"""
 import json
+#save point
 
 
 class FileStorage:
@@ -59,12 +60,9 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
-        """Deletes obj if exists"""
-        if obj is not None:
-            # create key to check if it exists
-            key = obj.__class__.__name__ + "." + obj.id
-            # if key in the dictionary then we use the key to delete the obj
-            if key in self.__objects:
-                self.__objects.pop(key)
-        else:
-            return
+        """Deletes obj from __objects"""
+        if obj is None:
+            pass
+        for key, val in dict(FileStorage.__objects).items():
+            if val == obj:
+                del FileStorage.__objects[key]
